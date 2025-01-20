@@ -1,6 +1,5 @@
-using System;
-using System.ComponentModel;
 using System.Reflection;
+using System.ComponentModel;
 
 namespace CodeReviews.Console.MathGame.Enums;
 

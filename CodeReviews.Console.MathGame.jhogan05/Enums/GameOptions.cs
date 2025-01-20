@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 
 namespace CodeReviews.Console.MathGame.Enums
 {
@@ -27,7 +26,7 @@ namespace CodeReviews.Console.MathGame.Enums
     {
         [Description("Correct")]    Correct,
         [Description("Incorrect")]  Incorrect,
-        [Description("Time-out")]        TimeOut
+        [Description("Time-out")]   TimeOut
 
     }
 }
