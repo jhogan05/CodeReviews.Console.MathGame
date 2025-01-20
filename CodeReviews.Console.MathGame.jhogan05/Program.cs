@@ -26,7 +26,7 @@ string? userName = Console.ReadLine();
 if (string.IsNullOrEmpty(userName))
 {
     Console.WriteLine("You must enter a name to play!");
-    Environment.Exit(-1);;
+    Environment.Exit(-1);
 }
 
 //
