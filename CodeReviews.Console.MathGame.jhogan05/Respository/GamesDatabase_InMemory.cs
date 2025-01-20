@@ -1,7 +1,7 @@
-using MyFirstProgram.Models;
-using MyFirstProgram.Enums;
+using CodeReviews.Console.MathGame.Models;
+using CodeReviews.Console.MathGame.Enums;
 
-namespace MyFirstProgram.Respository;
+namespace CodeReviews.Console.MathGame.Respository;
 
 public class GamesDatabase
 {

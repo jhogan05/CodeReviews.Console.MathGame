@@ -1,6 +1,6 @@
-using MyFirstProgram.Enums;
+using CodeReviews.Console.MathGame.Enums;
 
-namespace MyFirstProgram.Models;
+namespace CodeReviews.Console.MathGame.Models;
 
 public class GamesHistoryItem
 {

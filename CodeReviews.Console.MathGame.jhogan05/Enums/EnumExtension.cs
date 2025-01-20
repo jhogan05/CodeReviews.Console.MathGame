@@ -2,7 +2,7 @@ using System;
 using System.ComponentModel;
 using System.Reflection;
 
-namespace MyFirstProgram.Enums;
+namespace CodeReviews.Console.MathGame.Enums;
 
 static class EnumExtensions
 {

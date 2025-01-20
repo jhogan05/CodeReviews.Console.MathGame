@@ -1,4 +1,4 @@
-﻿using MyFirstProgram.UI;
+﻿using CodeReviews.Console.MathGame.UI;
 
 //
 // Requirements:

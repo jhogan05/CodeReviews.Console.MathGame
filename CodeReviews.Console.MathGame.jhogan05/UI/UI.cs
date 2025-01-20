@@ -1,11 +1,12 @@
 using Spectre.Console;
+using static System.Console;
 
-using MyFirstProgram.Enums;
-using MyFirstProgram.Models;
-using MyFirstProgram.Respository;
+using CodeReviews.Console.MathGame.Enums;
+using CodeReviews.Console.MathGame.Models;
+using CodeReviews.Console.MathGame.Respository;
 
+namespace CodeReviews.Console.MathGame.UI;
 
-namespace MyFirstProgram.UI;
 public class UI
 {
 
@@ -20,7 +21,7 @@ public class UI
 
         while (true)
         {
-            Console.Clear();
+            Clear();
 
             //
             // Header
@@ -75,7 +76,7 @@ public class UI
                 ShowGameHistory(gamesDatabase);
 
                 AnsiConsole.MarkupLine("[blue]Please Enter to continue...[/]");
-                Console.ReadKey();
+                ReadKey();
                 continue;
             }
             else if (selectedOption == GameOptions.IncreaseDifficulty)
@@ -83,7 +84,7 @@ public class UI
                 if (level == DifficultyLevel.Hard)
                 {
                     AnsiConsole.MarkupLine("[red]Cannot increase difficulty level further![/]");
-                    Console.ReadKey(true); // Wait for a key press
+                    ReadKey(true); // Wait for a key press
                 }
                 else
                 {
@@ -96,7 +97,7 @@ public class UI
                 if (level == DifficultyLevel.Easy)
                 {
                     AnsiConsole.MarkupLine("[red]Cannot decrease difficulty level further![/]");
-                    Console.ReadKey(true); // Wait for a key press
+                    ReadKey(true); // Wait for a key press
                 }
                 else
                 {
@@ -109,9 +110,9 @@ public class UI
             // Process game Options
             //
 
-            int? result = null;
-
             (int firstNumber, int secondNumber) = GetRandomNumbers(selectedOption, level, random);
+
+            int? result = null;
 
             try
             {
@@ -136,14 +137,14 @@ public class UI
 
                     default:
                         AnsiConsole.MarkupLine($"[red]Internal Errror - Game option '{selectedOption.ToString()}' not implemented![/]");
-                        Console.ReadKey(true); // Wait for a key press
+                        ReadKey(true); // Wait for a key press
                         break;
                 }
             }
             catch (OverflowException)
             {
-                AnsiConsole.MarkupLine("[red]Result exceeded the maximum or minumum value of an integer! Press any key to continue...[/]");
-                Console.ReadKey(true); // Wait for a key press
+                AnsiConsole.MarkupLine("[red]Internal Error - Result exceeded the maximum or minumum value of an integer! Press any key to continue...[/]");
+                ReadKey(true); // Wait for a key press
                 continue;
             }
 
@@ -171,23 +172,53 @@ public class UI
             if (result != null)
             {
                 gameNumber++;
-                gameWins += (result == response) ? 1 : 0;
 
-                SaveAndDisplayResult(userName, gamesDatabase, selectedOption, gamePlayed + $" = {result} ",
-                    (result == response ? GameResult.Correct : GameResult.Incorrect));
+                if (result == response) 
+                {
+                    gameWins++;
+                }
 
-                AnsiConsole.Markup("[blue]Press any key to continue...[/]");
-                Console.ReadKey(true); // Wait for a key press
+                gamePlayed += $" = {result}";
+
+                var gameOutcome = (result == response ? GameResult.Correct : GameResult.Incorrect);
+
+                DisplayAndSaveResult(userName, gamesDatabase, selectedOption, gamePlayed, gameOutcome);
             }
 
         }
 
     }
-    private static void SaveAndDisplayResult(string userName, GamesDatabase gamesDatabase, GameOptions selectedOption, string gamePlayed, GameResult outcome)
+    private static void DisplayAndSaveResult(string userName, GamesDatabase gamesDatabase, GameOptions selectedOption, string gamePlayed, GameResult outcome)
     {
-        Console.WriteLine();
-        Console.WriteLine();
-        AnsiConsole.MarkupLine("[blue]MathGame result:[/]");
+        //
+        // Display the result
+        //
+        
+        var table = new Table();
+
+        table.Title = new TableTitle("[blue]MathGame result:[/]");
+
+        table.AddColumn("[yellow]Player Name[/]")
+            .AddColumn("[yellow]Game Type[/]")
+            .AddColumn("[yellow]Play[/]")
+            .AddColumn("[yellow]Result[/]");
+
+        table.AddRow(
+            $"[cyan]{userName}[/]",
+            $"[green]{selectedOption}[/]",
+            gamePlayed,
+            (outcome == GameResult.Correct ? "[blue]" : "[red]") + $"{outcome.ToString()}[/]"
+            );
+
+        table.Border(TableBorder.Rounded);
+        AnsiConsole.Write(table);
+
+        AnsiConsole.Markup("[blue]Press any key to continue...[/]");
+        ReadKey(true);
+
+        //
+        // Save the game and result to the repository
+        //
 
         gamesDatabase.GamesHistory.Add(new GamesHistoryItem
         {
@@ -198,23 +229,6 @@ public class UI
             GamePlay = gamePlayed,
             GameResult = outcome
         });
-
-        var table = new Table();
-        table.Border(TableBorder.Rounded);
-
-        table.AddColumn("[yellow]Player Name[/]");
-        table.AddColumn("[yellow]Game Type[/]");
-        table.AddColumn("[yellow]Play[/]");
-        table.AddColumn("[yellow]Result[/]");
-
-        table.AddRow(
-            $"[cyan]{userName}[/]",
-            $"[green]{selectedOption}[/]",
-            gamePlayed,
-            (outcome == GameResult.Correct ? "[blue]" : "[red]") + $"{outcome.ToString()}[/]"
-            );
-
-        AnsiConsole.Write(table);
     }
 
     //
@@ -248,8 +262,11 @@ public class UI
     }
 
     //
-    // Randomly generate two numbers, and 
-    // for division check the result is a whole number
+    // Randomly generate two numbers, 
+    // but for division, 
+    //
+    // - ensure the divisor is not > 100 
+    // - the result of firstnumber / secondnumber is a whole number
     //
 
     private (int firstNumber, int secondNumber) GetRandomNumbers(GameOptions selectedOption, DifficultyLevel level, Random random)

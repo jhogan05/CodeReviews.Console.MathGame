@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 
-namespace MyFirstProgram.Enums
+namespace CodeReviews.Console.MathGame.Enums
 {
     public enum GameOptions
     {
